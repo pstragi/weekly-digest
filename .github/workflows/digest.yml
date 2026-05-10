@@ -1,0 +1,51 @@
+name: News Digest
+
+on:
+  schedule:
+    - cron: '0 5 * * 1'   # Monday    05:00 UTC = 07:00 CET / 07:00 CEST
+    - cron: '0 5 * * 4'   # Thursday  05:00 UTC = 06:00 CET / 07:00 CEST
+  workflow_dispatch:        # allows manual trigger from GitHub UI
+    inputs:
+      lookback:
+        description: 'Lookback window in hours (leave blank for auto)'
+        required: false
+        default: ''
+
+jobs:
+  run-digest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Determine lookback hours
+        id: lookback
+        run: |
+          if [ -n "${{ github.event.inputs.lookback }}" ]; then
+            echo "hours=${{ github.event.inputs.lookback }}" >> $GITHUB_OUTPUT
+          elif [ "$(date +%u)" = "1" ]; then
+            echo "hours=96" >> $GITHUB_OUTPUT   # Monday: covers Thu–Sun
+          else
+            echo "hours=72" >> $GITHUB_OUTPUT   # Thursday: covers Mon–Wed
+          fi
+
+      - name: Run digest
+        run: python main.py --lookback ${{ steps.lookback.outputs.hours }}
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SMTP_SERVER:       ${{ secrets.SMTP_SERVER }}
+          SMTP_PORT:         ${{ secrets.SMTP_PORT }}
+          SMTP_USER:         ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD:     ${{ secrets.SMTP_PASSWORD }}
+          RECIPIENT_EMAIL:   ${{ secrets.RECIPIENT_EMAIL }}
+          SENDER_NAME:       ${{ secrets.SENDER_NAME }}
