@@ -65,6 +65,14 @@ INTERESTS = {
             "stress management, personal growth, biohacking, longevity research"
         ),
     },
+    "CRYPTO": {
+        "emoji": "₿",
+        "description": (
+            "Cryptocurrency markets, Bitcoin, Ethereum, DeFi, NFTs, blockchain technology, "
+            "Web3, crypto regulation, exchange news, tokenomics, on-chain analytics, "
+            "crypto investing and trading trends, stablecoins, Layer 2 networks"
+        ),
+    },
 }
 
 # Authority scores (1–10) per source per category.
@@ -601,6 +609,73 @@ SOURCES = [
         "authority": {
             "MARKETING": 1, "TECHNOLOGY": 1, "SCIENCE": 4,
             "SOCIAL_SCIENCES": 3, "SPORT": 2, "WELLBEING": 8,
+        },
+    },
+
+    # ── CRYPTO — English ──────────────────────────────────────────────────────
+    {
+        "name": "CoinDesk",
+        "rss": "https://www.coindesk.com/arc/outboundfeeds/rss/",
+        "language": "en",
+        "authority": {
+            "MARKETING": 2, "TECHNOLOGY": 6, "SCIENCE": 1,
+            "SOCIAL_SCIENCES": 1, "SPORT": 1, "WELLBEING": 1, "CRYPTO": 10,
+        },
+    },
+    {
+        "name": "Cointelegraph",
+        "rss": "https://cointelegraph.com/rss",
+        "language": "en",
+        "authority": {
+            "MARKETING": 2, "TECHNOLOGY": 6, "SCIENCE": 1,
+            "SOCIAL_SCIENCES": 1, "SPORT": 1, "WELLBEING": 1, "CRYPTO": 10,
+        },
+    },
+    {
+        "name": "The Block",
+        "rss": "https://www.theblock.co/rss.xml",
+        "language": "en",
+        "authority": {
+            "MARKETING": 2, "TECHNOLOGY": 6, "SCIENCE": 1,
+            "SOCIAL_SCIENCES": 1, "SPORT": 1, "WELLBEING": 1, "CRYPTO": 9,
+        },
+    },
+    {
+        "name": "Decrypt",
+        "rss": "https://decrypt.co/feed",
+        "language": "en",
+        "authority": {
+            "MARKETING": 2, "TECHNOLOGY": 5, "SCIENCE": 1,
+            "SOCIAL_SCIENCES": 1, "SPORT": 1, "WELLBEING": 1, "CRYPTO": 9,
+        },
+    },
+    {
+        "name": "Blockworks",
+        "rss": "https://blockworks.co/feed",
+        "language": "en",
+        "authority": {
+            "MARKETING": 2, "TECHNOLOGY": 5, "SCIENCE": 1,
+            "SOCIAL_SCIENCES": 1, "SPORT": 1, "WELLBEING": 1, "CRYPTO": 8,
+        },
+    },
+
+    # ── CRYPTO — Polish ────────────────────────────────────────────────────────
+    {
+        "name": "BitHub.pl",
+        "rss": "https://bithub.pl/feed",
+        "language": "pl",
+        "authority": {
+            "MARKETING": 1, "TECHNOLOGY": 4, "SCIENCE": 1,
+            "SOCIAL_SCIENCES": 1, "SPORT": 1, "WELLBEING": 1, "CRYPTO": 9,
+        },
+    },
+    {
+        "name": "BeInCrypto PL",
+        "rss": "https://pl.beincrypto.com/feed/",
+        "language": "pl",
+        "authority": {
+            "MARKETING": 1, "TECHNOLOGY": 4, "SCIENCE": 1,
+            "SOCIAL_SCIENCES": 1, "SPORT": 1, "WELLBEING": 1, "CRYPTO": 9,
         },
     },
 ]

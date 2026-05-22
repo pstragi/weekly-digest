@@ -31,6 +31,11 @@ SPORT — Sports news and results, football, tennis, athletics, championships,
 WELLBEING — Health optimization, nutrition science, self-development, mindfulness,
   productivity, sleep science, stress management, personal growth, longevity.
 
+CRYPTO — Cryptocurrency markets, Bitcoin, Ethereum, DeFi, NFTs, blockchain technology,
+  Web3, crypto regulation, exchange news, tokenomics, on-chain analytics, trading trends,
+  stablecoins, Layer 2 networks. Must be specifically about crypto/blockchain — do NOT
+  assign tech articles that merely mention blockchain to this category.
+
 SCORING RULES:
 - category: the single best-matching category from the list above (semantic match, not keywords)
 - relevance (0–10): how strongly the article fits that category

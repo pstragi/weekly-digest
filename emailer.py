@@ -109,16 +109,21 @@ def generate_summaries(
 
 # ── HTML helpers ──────────────────────────────────────────────────────────────
 
+_ACCENT = "#1A5C4A"
+_LIME = "#9ECF3A"
+
 _BADGE_MUST_READ = (
-    '<span style="background:#c53030;color:#fff;padding:2px 8px;'
-    "border-radius:10px;font-size:11px;font-weight:700;"
-    'letter-spacing:0.3px;">🔥 MUST READ</span>'
+    f'<span style="background:{_ACCENT};color:#fff;padding:2px 10px;'
+    "border-radius:4px;font-size:10px;font-weight:700;"
+    'letter-spacing:1px;text-transform:uppercase;">🔥 MUST READ</span>'
 )
 _BADGE_TOP_PICK = (
-    '<span style="background:#c05621;color:#fff;padding:2px 8px;'
-    "border-radius:10px;font-size:11px;font-weight:700;"
-    'letter-spacing:0.3px;">⭐ TOP PICK</span>'
+    f'<span style="background:{_ACCENT};color:{_LIME};padding:2px 10px;'
+    "border-radius:4px;font-size:10px;font-weight:700;"
+    'letter-spacing:1px;text-transform:uppercase;">⭐ TOP PICK</span>'
 )
+
+_MONO = "font-family:'DM Mono',monospace;"
 
 
 def _importance_badge(importance: float) -> str:
@@ -141,9 +146,7 @@ def _published_label(published_dt: Optional[datetime]) -> str:
         label = f"{int(age_h)}h ago"
     else:
         label = published_dt.strftime("%b %d")
-    return (
-        f'<span style="color:#718096;font-size:12px;margin-left:6px;">{label}</span>'
-    )
+    return f'<span style="{_MONO}font-size:10px;color:#A0968A;">{label}</span>'
 
 
 def _article_card(art: dict, summary_data: dict) -> str:
@@ -151,44 +154,49 @@ def _article_card(art: dict, summary_data: dict) -> str:
     time_label = _published_label(art.get("published_dt"))
     summary = summary_data.get("summary", art.get("excerpt", ""))
     takeaway = summary_data.get("takeaway", "")
+    lang = art.get("language", "en").upper()
+
+    badge_html = f"{badge} " if badge else ""
 
     takeaway_html = ""
     if takeaway:
-        takeaway_html = (
-            '<p style="color:#2d3748;font-size:13px;margin:8px 0 0;'
-            "padding:8px 12px;background:#ebf8ff;border-radius:6px;"
-            'line-height:1.5;">'
-            f"<strong>💡 Takeaway:</strong> {takeaway}</p>"
-        )
+        takeaway_html = f"""
+      <div style="display:flex;align-items:flex-start;gap:10px;margin-top:12px;">
+        <div style="width:3px;background:{_LIME};border-radius:2px;flex-shrink:0;align-self:stretch;min-height:32px;"></div>
+        <p style="font-size:12px;color:#3D3530;line-height:1.6;margin:0;font-weight:500;">{takeaway}</p>
+      </div>"""
 
     return f"""
-    <div style="border-left:3px solid #4299e1;padding:12px 16px;margin:14px 0;
-                background:#f7fafc;border-radius:0 8px 8px 0;">
-      <div style="margin-bottom:6px;display:flex;align-items:center;flex-wrap:wrap;gap:4px;">
-        {badge}
-        <span style="color:#718096;font-size:12px;">{art['source']}</span>
+    <div style="margin-bottom:20px;padding:20px;background:#fff;border-radius:12px;border:1px solid #E2E8E4;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
+        {badge_html}<span style="{_MONO}font-size:10px;color:#A0968A;">{art['source'].upper()}</span>
+        <span style="{_MONO}font-size:10px;color:#C8BFB4;">/</span>
         {time_label}
+        <span style="{_MONO}font-size:9px;border:1px solid #D8D0C6;color:#A0968A;padding:1px 5px;border-radius:3px;letter-spacing:1px;">{lang}</span>
       </div>
       <a href="{art['url']}"
-         style="color:#1a202c;font-size:15px;font-weight:700;text-decoration:none;
-                line-height:1.4;display:block;">{art['title']}</a>
-      <p style="color:#4a5568;font-size:14px;line-height:1.65;margin:8px 0 0;">
-        {summary}
-      </p>
+         style="font-size:17px;font-weight:700;color:#0D0D0D;text-decoration:none;
+                line-height:1.3;display:block;margin-bottom:10px;letter-spacing:-0.2px;">{art['title']}</a>
+      <p style="font-size:13px;color:#6A6460;line-height:1.7;margin:0;font-weight:300;">{summary}</p>
       {takeaway_html}
     </div>"""
 
 
-def _category_section(category: str, info: dict, articles: list[dict], summaries: dict) -> str:
+def _category_section(
+    category: str, info: dict, articles: list[dict], summaries: dict, section_num: int
+) -> str:
     cards = "".join(
         _article_card(art, summaries.get(art["id"], {})) for art in articles
     )
+    num = str(section_num).zfill(2)
+    label = category.replace("_", " ")
     return f"""
-    <div style="margin:28px 0 20px;">
-      <h2 style="color:#1a202c;font-size:17px;font-weight:800;margin:0 0 2px;
-                 padding-bottom:10px;border-bottom:2px solid #e2e8f0;">
-        {info['emoji']} {category.replace('_', ' ')}
-      </h2>
+    <div style="margin-bottom:40px;">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;
+                  padding-bottom:16px;border-bottom:3px solid {_ACCENT};">
+        <span style="{_MONO}font-size:11px;color:#B0A89C;letter-spacing:1px;">{num}</span>
+        <span style="font-size:18px;font-weight:700;color:#0D0D0D;letter-spacing:-0.3px;">{info['emoji']} {label}</span>
+      </div>
       {cards}
     </div>"""
 
@@ -198,13 +206,12 @@ def build_html(articles_by_category: dict, summaries: dict) -> str:
 
     CET = pytz.timezone("Europe/Warsaw")
     today = datetime.now(CET).strftime("%A, %B %-d, %Y")
+    date_short = datetime.now(CET).strftime("%d-%m-%Y")
     total = sum(len(v) for v in articles_by_category.values())
-    cats = len(articles_by_category)
 
     sections = "".join(
-        _category_section(cat, INTERESTS[cat], articles_by_category[cat], summaries)
-        for cat in INTERESTS
-        if cat in articles_by_category
+        _category_section(cat, INTERESTS[cat], articles_by_category[cat], summaries, i + 1)
+        for i, cat in enumerate(cat for cat in INTERESTS if cat in articles_by_category)
     )
 
     return f"""<!DOCTYPE html>
@@ -212,40 +219,47 @@ def build_html(articles_by_category: dict, summaries: dict) -> str:
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Daily Digest — {today}</title>
+  <title>News Digest — {today}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
-<body style="margin:0;padding:0;background:#edf2f7;
-             font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,
-             'Helvetica Neue',Arial,sans-serif;">
-  <div style="max-width:680px;margin:0 auto;padding:24px 16px;">
+<body style="margin:0;padding:0;background:#EEF0EB;
+             font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;">
+<div style="max-width:680px;margin:0 auto;padding:28px 16px 40px;">
 
-    <!-- Header -->
-    <div style="background:linear-gradient(135deg,#1a202c 0%,#2d3748 100%);
-                padding:28px 32px;border-radius:12px 12px 0 0;">
-      <div style="color:#718096;font-size:11px;font-weight:700;letter-spacing:1.2px;
-                  text-transform:uppercase;">Your News Digest</div>
-      <h1 style="color:#fff;font-size:22px;font-weight:800;margin:6px 0 0;
-                 letter-spacing:-0.3px;">{today}</h1>
-      <p style="color:#718096;font-size:13px;margin:8px 0 0;">
-        {total} hand-picked stories across {cats} topics
-      </p>
+  <!-- Header -->
+  <div style="background:linear-gradient(135deg,#0A2E24 0%,#0D4A3A 25%,#1A6B50 55%,#5FA84A 80%,#9ECF3A 100%);
+              border-radius:18px;padding:40px 44px 44px;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:0;left:0;right:0;bottom:0;opacity:0.07;
+                background:repeating-linear-gradient(90deg,#fff 0px,#fff 1px,transparent 1px,transparent 40px);
+                pointer-events:none;"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;">
+      <span style="{_MONO}font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:1px;">NEWS DIGEST</span>
+      <span style="{_MONO}font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:1px;">{total} STORIES</span>
+      <span style="{_MONO}font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:1px;">{date_short}</span>
     </div>
-
-    <!-- Body -->
-    <div style="background:#fff;padding:24px 32px;border-radius:0 0 12px 12px;
-                box-shadow:0 4px 12px rgba(0,0,0,0.06);">
-      {sections}
-
-      <!-- Footer -->
-      <div style="border-top:1px solid #e2e8f0;margin-top:28px;padding-top:16px;">
-        <p style="color:#a0aec0;font-size:12px;text-align:center;margin:0;
-                  line-height:1.6;">
-          Curated by Claude AI · Delivered Monday &amp; Thursday at 7:00 AM CET
-        </p>
-      </div>
+    <div style="line-height:1.0;margin-bottom:28px;">
+      <div style="font-size:56px;font-weight:300;color:rgba(255,255,255,0.55);letter-spacing:-2px;line-height:1;">YOUR</div>
+      <div style="font-size:56px;font-weight:700;color:#fff;letter-spacing:-2px;line-height:1;">NEWS</div>
+      <div style="font-size:56px;font-weight:700;color:#9ECF3A;letter-spacing:-2px;line-height:1;">DIGEST ✦</div>
     </div>
-
+    <div style="border-top:1px solid rgba(255,255,255,0.15);padding-top:20px;">
+      <div style="font-size:13px;color:rgba(255,255,255,0.5);font-weight:300;">{today}</div>
+    </div>
   </div>
+
+  <!-- Body -->
+  <div style="background:#F8F7F2;border-radius:18px;padding:36px 40px 44px;margin-top:8px;">
+    {sections}
+
+    <!-- Footer -->
+    <div style="border-top:1px solid #E5E2DA;padding-top:20px;
+                display:flex;justify-content:space-between;align-items:center;">
+      <span style="{_MONO}font-size:10px;color:#C0B8B0;letter-spacing:0.5px;">Curated by Claude AI</span>
+      <span style="{_MONO}font-size:10px;color:#C0B8B0;letter-spacing:0.5px;">Mon &amp; Thu · 07:00 CET</span>
+    </div>
+  </div>
+
+</div>
 </body>
 </html>"""
 
